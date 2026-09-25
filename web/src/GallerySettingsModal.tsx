@@ -6,6 +6,23 @@ import { useEffect, useState } from 'react';
 import { BASE_Z_INDEX } from './ComfyAppApi';
 import { GithubOutlined } from '@ant-design/icons';
 
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div style={{ borderTop: '1px solid rgba(128,128,128,0.25)', paddingTop: 12 }}>
+        <Typography.Title level={5} style={{ marginTop: 0, marginBottom: 8 }}>{title}</Typography.Title>
+        <Flex vertical gap={12}>{children}</Flex>
+    </div>
+);
+
+const Row = ({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+        <div style={{ flex: 1 }}>
+            <Typography.Text strong>{label}</Typography.Text>
+            {hint && <div><Typography.Text type="secondary" style={{ fontSize: 12 }}>{hint}</Typography.Text></div>}
+        </div>
+        {children}
+    </div>
+);
+
 const GallerySettingsModal = () => {
     const { showSettings, setShowSettings, settings, setSettings } = useGalleryContext();
     // Staged (unsaved) settings
@@ -38,6 +55,7 @@ const GallerySettingsModal = () => {
             title={"Settings"}
             open={showSettings}
             centered
+            width={560}
             afterOpenChange={setShowSettings}
             onOk={handleSave}
             onCancel={handleCancel}
@@ -59,134 +77,124 @@ const GallerySettingsModal = () => {
                 </div>
             )}
         >
-            <Flex 
-                vertical 
-                gap={16}
-            >
-                <div>
-                    <Typography.Title 
-                        level={5}
-                    >
-                        Relative Path:
-                    </Typography.Title>
-                    <Input 
-                        value={staged.relativePath} 
-                        onChange={e => setStaged({ relativePath: e.target.value })} 
-                    />
-                </div>
-                <div>
-                    <Typography.Title 
-                        level={5}
-                    >
-                        Button Box Query:
-                    </Typography.Title>
-                    <Input 
-                        value={staged.buttonBoxQuery} 
-                        onChange={e => setStaged({ buttonBoxQuery: e.target.value })} 
-                    />
-                </div>
-                <div>
-                    <Typography.Title 
-                        level={5}
-                    >
-                        Button Label:
-                    </Typography.Title>
-                    <Input 
-                        value={staged.buttonLabel} 
-                        onChange={e => setStaged({ buttonLabel: e.target.value })} 
-                    />
-                </div>
-                <Switch
-                    checkedChildren={"Show Date Divider"}
-                    unCheckedChildren={"Don't Show Date Divider"}
-                    checked={staged.showDateDivider}
-                    onChange={checked => setStaged({ showDateDivider: checked })}
-                />
-                <Switch
-                    checkedChildren={"Floating Button"}
-                    unCheckedChildren={"Normal Button"}
-                    checked={staged.floatingButton}
-                    onChange={checked => setStaged({ floatingButton: checked })}
-                />
-                <Switch
-                    checkedChildren={"Auto Play Videos"}
-                    unCheckedChildren={"Don't Auto Play Videos"}
-                    checked={staged.autoPlayVideos}
-                    onChange={checked => setStaged({ autoPlayVideos: checked })}
-                />
-                <Switch
-                    checkedChildren={"Hide Open Button"}
-                    unCheckedChildren={"Show Open Button"}
-                    checked={staged.hideOpenButton}
-                    onChange={checked => setStaged({ hideOpenButton: checked })}
-                />
-                <Switch
-                    checkedChildren={"Dark Mode"}
-                    unCheckedChildren={"Light Mode"}
-                    checked={staged.darkMode}
-                    onChange={checked => setStaged({ darkMode: checked })}
-                />
-                <Switch
-                    checkedChildren={"Enable Ctrl+G Shortcut"}
-                    unCheckedChildren={"Disable Ctrl+G Shortcut"}
-                    checked={staged.galleryShortcut}
-                    onChange={checked => setStaged({ galleryShortcut: checked })}
-                />
-                <Switch
-                    checkedChildren={"Expand All Folders"}
-                    unCheckedChildren={"Collapse All Folders"}
-                    checked={staged.expandAllFolders}
-                    onChange={checked => setStaged({ expandAllFolders: checked })}
-                />
-                <Switch
-                    checkedChildren={"Disable Terminal Logs"}
-                    unCheckedChildren={"Enable Terminal Logs"}
-                    checked={staged.disableLogs}
-                    onChange={checked => setStaged({ disableLogs: checked })}
-                />
-                <Switch
-                    checkedChildren={"Use Polling Observer"}
-                    unCheckedChildren={"Use Native Observer"}
-                    checked={staged.usePollingObserver}
-                    onChange={checked => setStaged({ usePollingObserver: checked })}
-                />
-                <Switch
-                    checkedChildren={"Deduplicate Symlinks"}
-                    unCheckedChildren={"Show Symlinks Everywhere"}
-                    checked={staged.deduplicateSymlinks}
-                    onChange={checked => setStaged({ deduplicateSymlinks: checked })}
-                />
-                <div>
-                    <Typography.Title level={5}>Image Thumb Fit:</Typography.Title>
-                    <Typography.Text type="secondary" style={{ fontSize: 12 }}>Constrain image thumbnails in the grid by width or height</Typography.Text>
-                    <Select
-                        value={staged.imageThumbFit}
-                        onChange={val => setStaged({ imageThumbFit: val })}
-                        style={{ width: '100%' }}
-                        options={[
-                            { value: 'width', label: 'Fit Width' },
-                            { value: 'height', label: 'Fit Height' },
-                        ]}
-                    />
-                </div>
-                <div>
-                    <Typography.Title level={5}>Video Thumb Fit:</Typography.Title>
-                    <Typography.Text type="secondary" style={{ fontSize: 12 }}>Constrain video thumbnails in the grid by width or height</Typography.Text>
-                    <Select
-                        value={staged.videoThumbFit}
-                        onChange={val => setStaged({ videoThumbFit: val })}
-                        style={{ width: '100%' }}
-                        options={[
-                            { value: 'width', label: 'Fit Width' },
-                            { value: 'height', label: 'Fit Height' },
-                        ]}
-                    />
-                </div>
-                <div>
-                    <Typography.Title level={5}>Scan File Extensions:</Typography.Title>
-                    <Typography.Text type="secondary" style={{ fontSize: 12 }}>Comma separated (e.g. png, jpg, mp4, wav)</Typography.Text>
-                    <Input value={extInput} onChange={e => setExtInput(e.target.value)} />
-                </div>
+            <Flex vertical gap={20} style={{ paddingTop: 8 }}>
+                <Section title="Content">
+                    <Row label="Folder to scan" hint="Folder inside the output directory shown in the gallery. './' = everything.">
+                        <Input
+                            style={{ width: 180 }}
+                            value={staged.relativePath}
+                            onChange={e => setStaged({ relativePath: e.target.value })}
+                        />
+                    </Row>
+                    <Row label="File types" hint="Comma separated extensions to show (png, jpg, mp4, wav...).">
+                        <Input style={{ width: 180 }} value={extInput} onChange={e => setExtInput(e.target.value)} />
+                    </Row>
+                </Section>
+
+                <Section title="Open button">
+                    <Row label="Button label" hint="Text shown on the topbar button.">
+                        <Input
+                            style={{ width: 180 }}
+                            value={staged.buttonLabel}
+                            onChange={e => setStaged({ buttonLabel: e.target.value })}
+                        />
+                    </Row>
+                    <Row label="Floating button" hint="Off: the button stays in the top bar. On: a draggable floating button anywhere on screen.">
+                        <Switch
+                            checked={staged.floatingButton}
+                            onChange={checked => setStaged({ floatingButton: checked })}
+                        />
+                    </Row>
+                    <Row label="Hide button" hint="Hide the open button completely — open with Ctrl+G instead.">
+                        <Switch
+                            checked={staged.hideOpenButton}
+                            onChange={checked => setStaged({ hideOpenButton: checked })}
+                        />
+                    </Row>
+                    <Row label="Ctrl+G shortcut" hint="Open/close the gallery with the keyboard.">
+                        <Switch
+                            checked={staged.galleryShortcut}
+                            onChange={checked => setStaged({ galleryShortcut: checked })}
+                        />
+                    </Row>
+                </Section>
+
+                <Section title="Display">
+                    <Row label="Dark mode" hint="Dark theme for the gallery window.">
+                        <Switch
+                            checked={staged.darkMode}
+                            onChange={checked => setStaged({ darkMode: checked })}
+                        />
+                    </Row>
+                    <Row label="Date dividers" hint="Group files under a separator with the date.">
+                        <Switch
+                            checked={staged.showDateDivider}
+                            onChange={checked => setStaged({ showDateDivider: checked })}
+                        />
+                    </Row>
+                    <Row label="Autoplay videos" hint="Play video thumbnails automatically in the grid.">
+                        <Switch
+                            checked={staged.autoPlayVideos}
+                            onChange={checked => setStaged({ autoPlayVideos: checked })}
+                        />
+                    </Row>
+                    <Row label="Expand all folders" hint="Sidebar folders start expanded instead of collapsed.">
+                        <Switch
+                            checked={staged.expandAllFolders}
+                            onChange={checked => setStaged({ expandAllFolders: checked })}
+                        />
+                    </Row>
+                    <Row label="Image thumbnails" hint="How image thumbnails are sized in the grid.">
+                        <Select
+                            style={{ width: 180 }}
+                            value={staged.imageThumbFit}
+                            onChange={val => setStaged({ imageThumbFit: val })}
+                            options={[
+                                { value: 'width', label: 'Fit width' },
+                                { value: 'height', label: 'Fit height' },
+                            ]}
+                        />
+                    </Row>
+                    <Row label="Video thumbnails" hint="How video thumbnails are sized in the grid.">
+                        <Select
+                            style={{ width: 180 }}
+                            value={staged.videoThumbFit}
+                            onChange={val => setStaged({ videoThumbFit: val })}
+                            options={[
+                                { value: 'width', label: 'Fit width' },
+                                { value: 'height', label: 'Fit height' },
+                            ]}
+                        />
+                    </Row>
+                </Section>
+
+                <Section title="Advanced">
+                    <Row label="Button inject target" hint="CSS selector where the topbar button is injected. Touch only if the button doesn't appear after a ComfyUI frontend update.">
+                        <Input
+                            style={{ width: 180 }}
+                            value={staged.buttonBoxQuery}
+                            onChange={e => setStaged({ buttonBoxQuery: e.target.value })}
+                        />
+                    </Row>
+                    <Row label="Polling file watcher" hint="Enable if new files don't appear in the gallery (e.g. network filesystems).">
+                        <Switch
+                            checked={staged.usePollingObserver}
+                            onChange={checked => setStaged({ usePollingObserver: checked })}
+                        />
+                    </Row>
+                    <Row label="Deduplicate symlinks" hint="Show files reachable via symlinked folders only once.">
+                        <Switch
+                            checked={staged.deduplicateSymlinks}
+                            onChange={checked => setStaged({ deduplicateSymlinks: checked })}
+                        />
+                    </Row>
+                    <Row label="Disable backend logs" hint="Silence the file watcher logs in the ComfyUI console.">
+                        <Switch
+                            checked={staged.disableLogs}
+                            onChange={checked => setStaged({ disableLogs: checked })}
+                        />
+                    </Row>
+                </Section>
             </Flex>
         </Modal>
     );
