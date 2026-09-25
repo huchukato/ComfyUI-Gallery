@@ -76,6 +76,28 @@ function ImageCard({
     const { settings, selectedImages, setSelectedImages, setPreviewingVideo } = useGalleryContext();
     const dragRef = useRef<HTMLDivElement>(null);
     const [dragging, setDragging] = useState(false);
+    const draggedFile = useRef<{ url: string; file: File | null }>({ url: '', file: null });
+
+    // Prefetch the media file as a blob on mousedown so that by the time the
+    // browser fires dragstart we can hand ComfyUI a real File (dataTransfer.files),
+    // which makes dropping onto the canvas create/fill a Load Image node.
+    const prefetchDragFile = () => {
+        const url = `${BASE_PATH}${image.url}`;
+        if (draggedFile.current.url === url) return;
+        draggedFile.current = { url, file: null };
+        fetch(url)
+            .then((r) => r.blob())
+            .then((blob) => {
+                if (draggedFile.current.url === url) {
+                    draggedFile.current.file = new File(
+                        [blob],
+                        image.name || url.split('/').pop() || 'media',
+                        { type: blob.type || 'application/octet-stream' }
+                    );
+                }
+            })
+            .catch(() => {});
+    };
 
     useDrag(
         {
@@ -132,6 +154,11 @@ function ImageCard({
 
         event.dataTransfer.setData('text/uri-list', `${BASE_PATH}${image.url}`);
         event.dataTransfer.setData('DownloadURL', `${mimeType}:${image.name}:${window.location.origin + BASE_PATH + image.url}`);
+        // If the prefetched blob is ready, attach a real File so dropping the
+        // card onto the ComfyUI canvas behaves like dropping a file from disk.
+        if (draggedFile.current.file && draggedFile.current.url === `${BASE_PATH}${image.url}`) {
+            event.dataTransfer.items.add(draggedFile.current.file);
+        }
         // Optionally, set a drag image
         // event.dataTransfer.setDragImage(event.currentTarget, 10, 10);
     };
@@ -157,6 +184,7 @@ function ImageCard({
                 boxShadow: selectedImages.includes(image.url) ? '0 0 0 3px #1890ff' : undefined,
             }}
             onClick={handleCardClick}
+            onPointerDown={prefetchDragFile}
         >
             {image.type == "image" ? (<>
                 <Image
