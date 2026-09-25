@@ -132,6 +132,7 @@ const GalleryHeader = () => {
                     >
                         <Button
                             type="primary"
+                            size="large"
                             loading={downloading}
                             style={{ marginLeft: 8 }}
                             className="selectedImagesActionButton"
@@ -167,6 +168,7 @@ const GalleryHeader = () => {
                     >
                         <Button
                             danger
+                            size="large"
                             style={{ marginLeft: 8 }}
                             className="selectedImagesActionButton"
                         >

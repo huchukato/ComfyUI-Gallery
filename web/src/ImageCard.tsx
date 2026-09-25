@@ -2,8 +2,10 @@ import { Button, Image, Typography } from 'antd';
 import type { FileDetails } from './types';
 import InfoCircleOutlined from '@ant-design/icons/lib/icons/InfoCircleOutlined';
 import SoundOutlined from '@ant-design/icons/lib/icons/SoundOutlined';
+import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined';
 import React, { useRef, useState } from 'react';
 import { useDrag, useEventListener } from 'ahooks';
+import FileSaver from 'file-saver';
 import { useGalleryContext } from './GalleryContext';
 import { BASE_PATH } from './ComfyAppApi';
 import { use3DThumbnail } from './GlobalModelRenderer';
@@ -292,16 +294,32 @@ function ImageCard({
                 >
                     {image.name}
                 </Typography.Text>
-                <Button
-                    color="cyan"
-                    variant="filled"
-                    icon={<InfoCircleOutlined />}
-                    size={"middle"}
-                    onClick={() => {
-                        onInfoClick(image.name);
-                        document.getElementById(image.url)?.click();
-                    }}
-                />
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <Button
+                        color="cyan"
+                        variant="filled"
+                        icon={<DownloadOutlined />}
+                        size={"large"}
+                        onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                                const res = await fetch(`${BASE_PATH}${image.url}`);
+                                const blob = await res.blob();
+                                FileSaver.saveAs(blob, image.name || 'download');
+                            } catch { }
+                        }}
+                    />
+                    <Button
+                        color="cyan"
+                        variant="filled"
+                        icon={<InfoCircleOutlined />}
+                        size={"large"}
+                        onClick={() => {
+                            onInfoClick(image.name);
+                            document.getElementById(image.url)?.click();
+                        }}
+                    />
+                </div>
             </div>
         </div>
     </>)
