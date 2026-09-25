@@ -152,18 +152,26 @@ const GalleryOpenButton = () => {
             </div>
         );
     }
-    // Not floating
+    // Not floating — subtle topbar-style button matching ComfyUI's chrome
     return (<>
         <Button
             id="comfy-ui-gallery-open-button"
-            type={"primary"}
+            type={"text"}
             onClick={() => {
                 if (!loading) setOpen(true);
             }}
             disabled={loading}
             loading={loading}
+            style={{
+                color: 'inherit',
+                border: '1px solid rgba(128,128,128,0.35)',
+                borderRadius: 6,
+                height: 32,
+                padding: '0 10px',
+                fontWeight: 500,
+            }}
         >
-            {settings.buttonLabel || 'Open Gallery'}
+            🖼️ {settings.buttonLabel || 'Gallery'}
         </Button>
     </>);
 };
