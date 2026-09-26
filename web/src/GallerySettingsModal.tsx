@@ -1,5 +1,5 @@
 import Modal from 'antd/es/modal/Modal';
-import { Button, Flex, Input, Select, Switch, Typography } from 'antd';
+import { Button, ColorPicker, Flex, Input, Select, Switch, Typography } from 'antd';
 import { useGalleryContext, type SettingsState } from './GalleryContext';
 import { useSetState } from 'ahooks';
 import { useEffect, useState } from 'react';
@@ -97,6 +97,15 @@ const GallerySettingsModal = () => {
                             style={{ width: 180 }}
                             value={staged.buttonLabel}
                             onChange={e => setStaged({ buttonLabel: e.target.value })}
+                        />
+                    </Row>
+                    <Row label="Button color" hint="Custom accent color for the button. Clear it to go back to the default themed look.">
+                        <ColorPicker
+                            value={staged.buttonColor || ''}
+                            allowClear
+                            showText
+                            onChange={(c) => setStaged({ buttonColor: c.toHexString() })}
+                            onClear={() => setStaged({ buttonColor: '' })}
                         />
                     </Row>
                     <Row label="Floating button" hint="Off: the button stays in the top bar. On: a draggable floating button anywhere on screen.">

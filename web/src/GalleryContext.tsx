@@ -31,6 +31,7 @@ export interface SettingsState {
     relativePath: string;
     buttonBoxQuery: string;
     buttonLabel: string;
+    buttonColor: string;
     showDateDivider: boolean;
     floatingButton: boolean;
     autoPlayVideos: boolean;
@@ -50,6 +51,7 @@ export const DEFAULT_SETTINGS: SettingsState = {
     relativePath: './',
     buttonBoxQuery: 'div.flex.gap-2.mx-2',
     buttonLabel: 'Open Gallery',
+    buttonColor: '',
     showDateDivider: true,
     floatingButton: false,
     autoPlayVideos: true,

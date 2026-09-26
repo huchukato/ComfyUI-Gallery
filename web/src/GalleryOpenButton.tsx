@@ -152,11 +152,28 @@ const GalleryOpenButton = () => {
             </div>
         );
     }
-    // Not floating — subtle topbar-style button matching ComfyUI's chrome
+    // Not floating — subtle topbar-style button; optional custom accent color
+    const accent = (settings.buttonColor || '').trim();
+    const contrastText = (hex: string) => {
+        const m = hex.replace('#', '');
+        if (!/^[0-9a-fA-F]{6}$/.test(m)) return '#ffffff';
+        const r = parseInt(m.slice(0, 2), 16) / 255;
+        const g = parseInt(m.slice(2, 4), 16) / 255;
+        const b = parseInt(m.slice(4, 6), 16) / 255;
+        const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return lum > 0.5 ? '#1f1f1f' : '#ffffff';
+    };
+    const customStyle = accent
+        ? {
+            background: accent,
+            borderColor: accent,
+            color: contrastText(accent),
+        }
+        : {};
     return (<>
         <Button
             id="comfy-ui-gallery-open-button"
-            type={"default"}
+            type={accent ? "primary" : "default"}
             onClick={() => {
                 if (!loading) setOpen(true);
             }}
@@ -167,6 +184,7 @@ const GalleryOpenButton = () => {
                 height: 32,
                 padding: '0 12px',
                 fontWeight: 600,
+                ...customStyle,
             }}
         >
             🖼️ {settings.buttonLabel || 'Gallery'}
