@@ -2,6 +2,7 @@
 import os
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import quote
 from .metadata_extractor import buildMetadata  # Import metadata extractor
 
 # Default extensions include images, media, audio, and 3D
@@ -91,7 +92,7 @@ def _scan_for_images(full_base_path, base_path, include_subfolders, allowed_exte
             # Pre-compute subfolder string once per directory
             rel_path = os.path.relpath(dir_path, full_base_path)
             subfolder = rel_path if rel_path != "." else ""
-            subfolder_prefix = f"/static_gallery/{subfolder}/" if subfolder else "/static_gallery/"
+            subfolder_prefix = f"/static_gallery/{quote(subfolder)}/" if subfolder else "/static_gallery/"
 
             for full_path, entry_name, stat in file_entries:
                 lower_entry = entry_name.lower()
@@ -99,7 +100,7 @@ def _scan_for_images(full_base_path, base_path, include_subfolders, allowed_exte
                     try:
                         timestamp = stat.st_mtime
                         date_str = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
-                        url_path = (subfolder_prefix + entry_name).replace("\\", "/")
+                        url_path = (subfolder_prefix + quote(entry_name)).replace("\\", "/")
 
                         ext = os.path.splitext(lower_entry)[1]
                         file_type = _EXT_TYPE_MAP.get(ext, "unknown")

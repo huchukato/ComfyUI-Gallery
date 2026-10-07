@@ -230,7 +230,8 @@ async def delete_image(request):
         if not image_url:
             return web.Response(status=400, text="image_path is required")
         if image_url.startswith("/static_gallery/"):
-            relative_path = image_url[len("/static_gallery/"):]
+            from urllib.parse import unquote
+            relative_path = unquote(image_url[len("/static_gallery/"):])
 
         else:
             return web.Response(status=400, text="Invalid image_path format")
@@ -272,7 +273,11 @@ async def move_image(request):
         else:
             static_dir = folder_paths.get_output_directory()
         static_dir_basename = os.path.basename(os.path.normpath(static_dir))
+        from urllib.parse import unquote
         def make_path(p):
+            if p.startswith("/static_gallery/"):
+                p = p[len("/static_gallery/"):]
+            p = unquote(p)
             if os.path.isabs(p):
                 return os.path.normpath(p)
             if p.startswith(static_dir_basename + os.sep):
