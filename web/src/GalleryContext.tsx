@@ -93,6 +93,7 @@ export interface GalleryContextType {
     error: any;
     loading: boolean;
     runAsync: () => Promise<any>;
+    refreshAsync: () => Promise<any>;
     mutate: (data?: FilesTree | ((oldData?: FilesTree | undefined) => FilesTree | undefined) | undefined) => void;
     gridSize: { width: number; height: number; columnCount: number; rowCount: number };
     setGridSize: Dispatch<SetStateAction<{ width: number; height: number; columnCount: number; rowCount: number }>>;
@@ -361,7 +362,7 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
         open, setOpen,
         previewingVideo, setPreviewingVideo,
         size, imagesBoxSize,
-        data, error, loading, runAsync, mutate,
+        data, error, loading, runAsync, mutate, refreshAsync,
         gridSize, setGridSize,
         autoSizer, setAutoSizer,
         imagesDetailsList,
@@ -392,6 +393,7 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
         loading,
         runAsync,
         mutate,
+        refreshAsync,
         gridSize,
         autoSizer,
         imagesDetailsList,

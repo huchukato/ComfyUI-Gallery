@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Flex, AutoComplete, Button, Segmented, Modal, message, Popconfirm } from 'antd';
-import { CloseSquareFilled, DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
+import { CloseSquareFilled, DoubleLeftOutlined, DoubleRightOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useGalleryContext } from './GalleryContext';
 import { useDebounce, useCountDown } from 'ahooks';
 import Typography from 'antd/es/typography/Typography';
@@ -17,7 +17,8 @@ const GalleryHeader = () => {
         autoCompleteOptions, setAutoCompleteOptions,
         setOpen,
         selectedImages, setSelectedImages,
-        siderCollapsed, setSiderCollapsed
+        siderCollapsed, setSiderCollapsed,
+        imagesUrlsLists, refreshAsync
     } = useGalleryContext();
 
     const [search, setSearch] = useState("");
@@ -90,6 +91,24 @@ const GalleryHeader = () => {
                 >
                     {siderCollapsed ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
                 </Button>
+                <Button 
+                    size={"middle"} 
+                    onClick={() => {
+                        if (imagesUrlsLists.length > 0 && selectedImages.length === imagesUrlsLists.length) {
+                            setSelectedImages([]);
+                        } else {
+                            setSelectedImages([...imagesUrlsLists]);
+                        }
+                    }}
+                >
+                    {selectedImages.length > 0 && selectedImages.length === imagesUrlsLists.length ? "Deselect All" : "Select All"}
+                </Button>
+                <Button
+                    size={"middle"}
+                    icon={<ReloadOutlined />}
+                    onClick={() => { setSelectedImages([]); refreshAsync(); }}
+                    title="Refresh gallery"
+                />
                 <Button 
                     size={"middle"} 
                     onClick={() => setShowSettings(true)}
